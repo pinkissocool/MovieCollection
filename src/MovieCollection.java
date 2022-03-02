@@ -157,7 +157,7 @@ public class MovieCollection
 
 
             int possibleIndex = j;
-            while (possibleIndex > 0 && tempRating < listToSort.get(possibleIndex - 1).getUserRating())
+            while (possibleIndex > 0 && tempRating > listToSort.get(possibleIndex - 1).getUserRating())
             {
                 listToSort.set(possibleIndex, listToSort.get(possibleIndex - 1));
                 possibleIndex--;
@@ -175,7 +175,7 @@ public class MovieCollection
 
 
             int possibleIndex = j;
-            while (possibleIndex > 0 && tempRevenue < listToSort.get(possibleIndex - 1).getRevenue())
+            while (possibleIndex > 0 && tempRevenue > listToSort.get(possibleIndex - 1).getRevenue())
             {
                 listToSort.set(possibleIndex, listToSort.get(possibleIndex - 1));
                 possibleIndex--;
@@ -227,20 +227,31 @@ public class MovieCollection
             String cast = movies.get(i).getCast().toLowerCase();
             ArrayList<String> castList = new ArrayList<String>();
 
-            while (cast.contains("\\|")){
-                int endIdx = cast.indexOf("\\|");
+
+            int numDelim = 0;
+            for (int c = 0; c < cast.length(); c++){
+                if (cast.substring(c, c+1).equals("|")){
+                    numDelim++;
+                }
+            }
+
+            while (numDelim >0){
+                int endIdx = cast.indexOf("|");
                 castList.add(cast.substring(0, endIdx));
                 cast = cast.substring(endIdx+1);
+                numDelim--;
             }
             castList.add(cast);
 
-            for (int k = 0; k< castList.size(); k++){
-                String element = castList.get(i);
-                if (people.indexOf(element) != -1){
-                    people.add(element);
+
+            for (int k = 0; k < castList.size(); k++){
+                String person = castList.get(k);
+                if (people.indexOf(person) == -1 && person.contains(name) && !person.contains("\\|")){
+                    people.add(person);
                 }
             }
         }
+        sortResultsString(people);
         for (int j = 0; j < people.size(); j++){
             System.out.println(j + 1 + ". " + people.get(j));
         }
@@ -341,7 +352,7 @@ public class MovieCollection
         sortResultsRating(temp);
         for (int i = 0; i < 50; i++)
         {
-            highestRated.add(temp.get(i));
+            highestRated.add(0, temp.get(i));
             System.out.println(i + 1 + ". " + temp.get(i).getTitle() + ": " + temp.get(i).getUserRating());
         }
 
